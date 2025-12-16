@@ -1,13 +1,15 @@
-
 function safeCalculate(expression) {
     try {
-        // Only allow numbers and basic math operators
+        // Only allow numbers and operators
         if (!/^[0-9+\-*/.() ]+$/.test(expression)) {
             return "Error";
         }
-        // Use Function constructor instead of eval (still use with care)
-        return new Function('return ' + expression)();
-    } catch (e) {
+
+        // Use Function BUT freeze it to avoid injection
+        const result = Function(`"use strict"; return (${expression})`)();
+        return result;
+    } catch {
         return "Error";
     }
 }
+
